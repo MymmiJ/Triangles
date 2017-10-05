@@ -99,8 +99,8 @@ class GeometryChecker {
     public function isPointOnEdge(Point $point, Triangle $triangle) {
         if($this->isOneLine($triangle)) throw new TriangleException("$triangle is not a valid triangle.");
 
-        if( $this->isOneLine(new Triangle($triangle->p1(),$triangle->p2(),$point))
-         || $this->isOneLine(new Triangle($triangle->p2(),$triangle->p3(),$point))
+        if( $this->isOneLine(new Triangle($triangle->p1(),$point,$triangle->p2()))
+         || $this->isOneLine(new Triangle($triangle->p2(),$point,$triangle->p3()))
          || $this->isOneLine(new Triangle($triangle->p1(),$point,$triangle->p3())) ) {
             return true;
         } else {
