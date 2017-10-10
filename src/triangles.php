@@ -70,17 +70,11 @@ class GeometryChecker {
      * @returns bool true if is one line (that means it is not a triangle), false if is not
      */ 
     protected function isOneLine(Triangle $triangle) {
-        $dist_p1_p2 =   sqrt( pow(($triangle->p2()->x() - $triangle->p1()->x()) , 2)
-                            +
-                              pow(($triangle->p2()->y() - $triangle->p1()->y()) , 2));
+        $dist_p1_p2 =   $this->get_distance_between_points($triangle->p1(), $triangle->p2());
 
-        $dist_p2_p3 =   sqrt( pow(($triangle->p3()->x() - $triangle->p2()->x()) , 2)
-                            +
-                              pow(($triangle->p3()->y() - $triangle->p2()->y()) , 2));
+        $dist_p2_p3 =   $this->get_distance_between_points($triangle->p2(), $triangle->p3());
 
-        $dist_p1_p3 =   sqrt( pow(($triangle->p3()->x() - $triangle->p1()->x()) , 2)
-                            +
-                              pow(($triangle->p3()->y() - $triangle->p1()->y()) , 2));
+        $dist_p1_p3 =   $this->get_distance_between_points($triangle->p1(), $triangle->p3());
 
 //        echo "<p>" . ($dist_p1_p2 + $dist_p2_p3) . "</p>" . PHP_EOL;
 
@@ -88,6 +82,24 @@ class GeometryChecker {
 
 
         return $dist_p1_p2 + $dist_p2_p3 === $dist_p1_p3;
+    }
+
+    protected function get_distance_between_points($point_one,$point_two) {
+        $point_x_dist = $point_one->x() - $point_two->x();
+
+        $point_y_dist = $point_one->y() - $point_two->y();
+
+        $point_one_greater = ($point_x_dist + $point_y_dist > 0);
+
+        $overall_distance = sqrt( pow($point_x_dist,2)
+                            +
+                                  pow($point_y_dist,2));
+
+        if($point_one_greater) {
+            return $overall_distance;
+        } else {
+            return 0 - $overall_distance;
+        }
     }
 
     /**
@@ -99,13 +111,9 @@ class GeometryChecker {
     public function isPointOnEdge(Point $point, Triangle $triangle) {
         if($this->isOneLine($triangle)) throw new TriangleException("$triangle is not a valid triangle.");
 
-        if( $this->isOneLine(new Triangle($triangle->p1(),$point,$triangle->p2()))
+        return $this->isOneLine(new Triangle($triangle->p1(),$point,$triangle->p2()))
          || $this->isOneLine(new Triangle($triangle->p2(),$point,$triangle->p3()))
-         || $this->isOneLine(new Triangle($triangle->p1(),$point,$triangle->p3())) ) {
-            return true;
-        } else {
-            return false;
-        }
+         || $this->isOneLine(new Triangle($triangle->p1(),$point,$triangle->p3()));
          
         
     }
